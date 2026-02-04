@@ -3,6 +3,7 @@ version: '3.8'
 services:
   database:
     image: mysql:8.0
+    platform: linux/amd64
     container_name: mempa-mysql
     cap_add:
       - SYS_NICE
@@ -19,6 +20,7 @@ services:
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
+    platform: linux/amd64
     container_name: mempa-pma
     environment:
       PMA_HOST: database
