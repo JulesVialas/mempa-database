@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  database:
+    image: mysql:8.0
+    container_name: mempa-mysql
+    cap_add:
+      - SYS_NICE
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: mempa_db
+    ports:
+      - "3306:3306"
+    networks:
+      - mempa-network
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - db_data:/var/lib/mysql
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: mempa-pma
+    environment:
+      PMA_HOST: database
+    ports:
+      - "8080:80"
+    networks:
+      - mempa-network
+    depends_on:
+      - database
+
+volumes:
+  db_data:
+
+networks:
+  mempa-network:
+    name: mempa-network
+    driver: bridge

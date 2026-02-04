@@ -1,0 +1,23 @@
+# --- OS Files (Mac & Windows) ---
+.DS_Store
+Thumbs.db
+
+# --- IDEs (Configuration éditeur) ---
+# WebStorm / IntelliJ
+.idea/
+*.iml
+# VS Code
+.vscode/
+
+# --- Docker & Environnement ---
+
+.env
+
+# --- Data (Sécurité & Poids) ---
+data/
+db_data/
+mysql_data/
+dump/
+
+# --- Logs ---
+*.log
