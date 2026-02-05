@@ -1,17 +1,16 @@
 -- ============================================================
--- 0. INITIALISATION
+-- INITIALISATION
 -- ============================================================
--- On repart d'une feuille blanche pour éviter les conflits
 DROP DATABASE IF EXISTS mempa_db;
 CREATE DATABASE mempa_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE mempa_db;
 
 -- ============================================================
--- 1. STRUCTURE DES DONNÉES (DDL)
+-- STRUCTURE DES DONNÉES (LDD)
 -- ============================================================
 
 -- Table UTILISATEUR
--- Stockage des comptes.
+-- Stockage des comptes utilisateurs.
 CREATE TABLE utilisateur (
     id INT AUTO_INCREMENT PRIMARY KEY,
     pseudo VARCHAR(50) NOT NULL,
@@ -33,26 +32,24 @@ CREATE TABLE playlist (
     date_creation TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     date_modification TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     CONSTRAINT fk_playlist_createur FOREIGN KEY (createur_id) REFERENCES utilisateur(id) ON DELETE CASCADE,
-    -- Index FullText pour la recherche performante (V2)
     FULLTEXT INDEX idx_ft_recherche (nom, style)
 ) ENGINE=InnoDB;
 
 -- Table MORCEAU
--- Catalogue unique des chansons (Titre + Artiste).
+-- Catalogue des chansons comprenant le titre et l'artiste.
 CREATE TABLE morceau (
     id INT AUTO_INCREMENT PRIMARY KEY,
     titre VARCHAR(150) NOT NULL,
     artiste VARCHAR(100) NOT NULL,
-    -- Empêche d'avoir deux fois le même morceau dans la base
     CONSTRAINT uk_morceau_titre_artiste UNIQUE (titre, artiste)
 ) ENGINE=InnoDB;
 
 -- Table CONTENU_PLAYLIST (Table d'association)
--- Lie les morceaux aux playlists avec une notion d'ordre (position).
+-- Lie les morceaux aux playlists avec leur position dans la playlist.
 CREATE TABLE contenu_playlist (
     playlist_id INT NOT NULL,
     morceau_id INT NOT NULL,
-    position INT NOT NULL, -- Géré par le Backend Node.js
+    position INT NOT NULL,
     date_ajout TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (playlist_id, morceau_id),
     CONSTRAINT fk_contenu_playlist FOREIGN KEY (playlist_id) REFERENCES playlist(id) ON DELETE CASCADE,
@@ -60,7 +57,7 @@ CREATE TABLE contenu_playlist (
 ) ENGINE=InnoDB;
 
 -- Table PARTICIPATION
--- Trace qui a contribué à quelle playlist (V3).
+-- Trace qui a contribué à quelle playlist pour la v3.
 CREATE TABLE participation (
     playlist_id INT NOT NULL,
     utilisateur_id INT NOT NULL,
@@ -73,5 +70,4 @@ CREATE TABLE participation (
 
 -- ============================================================
 -- FIN DU SCRIPT
--- Pas de procédures stockées : La logique est dans le Backend Node.js
 -- ============================================================
