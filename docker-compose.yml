@@ -8,8 +8,8 @@ services:
     cap_add:
       - SYS_NICE
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: mempa_db
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
     ports:
       - "3306:3306"
     networks:
@@ -23,7 +23,7 @@ services:
     platform: linux/amd64
     container_name: mempa-pma
     environment:
-      PMA_HOST: database
+      PMA_HOST: ${PMA_HOST}
     ports:
       - "8080:80"
     networks:
