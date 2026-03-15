@@ -76,11 +76,13 @@ CREATE TABLE proposition (
     utilisateur_id INT NOT NULL,
     titre VARCHAR(150) NOT NULL,
     artiste VARCHAR(100) NOT NULL,
-    statut ENUM('en_attente', 'acceptee', 'refusee') DEFAULT 'en_attente',
-    date_proposition TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    statut ENUM('en_attente', 'acceptee', 'refusee') NOT NULL DEFAULT 'en_attente',
+    date_proposition TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     date_decision TIMESTAMP NULL DEFAULT NULL,
     CONSTRAINT fk_proposition_playlist FOREIGN KEY (playlist_id) REFERENCES playlist(id) ON DELETE CASCADE,
-    CONSTRAINT fk_proposition_utilisateur FOREIGN KEY (utilisateur_id) REFERENCES utilisateur(id) ON DELETE CASCADE
+    CONSTRAINT fk_proposition_utilisateur FOREIGN KEY (utilisateur_id) REFERENCES utilisateur(id) ON DELETE CASCADE,
+    INDEX idx_proposition_playlist_statut (playlist_id, statut),
+    INDEX idx_proposition_utilisateur_id (utilisateur_id)
 ) ENGINE=InnoDB;
 
 -- ============================================================
