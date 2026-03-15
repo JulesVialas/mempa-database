@@ -50,10 +50,12 @@ CREATE TABLE contenu_playlist (
     playlist_id INT NOT NULL,
     morceau_id INT NOT NULL,
     position INT NOT NULL,
+    proposeur_id INT NULL,
     date_ajout TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (playlist_id, morceau_id),
     CONSTRAINT fk_contenu_playlist FOREIGN KEY (playlist_id) REFERENCES playlist(id) ON DELETE CASCADE,
-    CONSTRAINT fk_contenu_morceau FOREIGN KEY (morceau_id) REFERENCES morceau(id) ON DELETE CASCADE
+    CONSTRAINT fk_contenu_morceau FOREIGN KEY (morceau_id) REFERENCES morceau(id) ON DELETE CASCADE,
+    CONSTRAINT fk_contenu_proposeur FOREIGN KEY (proposeur_id) REFERENCES utilisateur(id) ON DELETE SET NULL
 ) ENGINE=InnoDB;
 
 -- Table PARTICIPATION
@@ -66,6 +68,23 @@ CREATE TABLE participation (
     PRIMARY KEY (playlist_id, utilisateur_id),
     CONSTRAINT fk_participation_playlist FOREIGN KEY (playlist_id) REFERENCES playlist(id) ON DELETE CASCADE,
     CONSTRAINT fk_participation_user FOREIGN KEY (utilisateur_id) REFERENCES utilisateur(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- Table PROPOSITION
+-- Stocke les propositions de morceaux soumises par les utilisateurs pour une playlist.
+CREATE TABLE proposition (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    playlist_id INT NOT NULL,
+    utilisateur_id INT NOT NULL,
+    titre VARCHAR(150) NOT NULL,
+    artiste VARCHAR(100) NOT NULL,
+    statut ENUM('en_attente', 'acceptee', 'refusee') NOT NULL DEFAULT 'en_attente',
+    date_proposition TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    date_decision TIMESTAMP NULL DEFAULT NULL,
+    CONSTRAINT fk_proposition_playlist FOREIGN KEY (playlist_id) REFERENCES playlist(id) ON DELETE CASCADE,
+    CONSTRAINT fk_proposition_utilisateur FOREIGN KEY (utilisateur_id) REFERENCES utilisateur(id) ON DELETE CASCADE,
+    INDEX idx_proposition_playlist_statut (playlist_id, statut),
+    INDEX idx_proposition_utilisateur_id (utilisateur_id)
 ) ENGINE=InnoDB;
 
 -- ============================================================
@@ -175,6 +194,12 @@ INSERT INTO participation (playlist_id, utilisateur_id) VALUES
 -- Alice (ID 1) a ajouté un son dans la playlist Soirée de Charlie (ID 3)
 INSERT INTO participation (playlist_id, utilisateur_id) VALUES
 (3, 1);
+
+-- 6. INSERTION DES PROPOSITIONS (DONNÉES DE TEST)
+INSERT INTO proposition (playlist_id, utilisateur_id, titre, artiste, statut) VALUES
+(1, 2, 'Paranoid', 'Black Sabbath', 'en_attente'),        -- Bob propose à la playlist Rock d'Alice
+(1, 3, 'Purple Haze', 'Jimi Hendrix', 'en_attente'),      -- Charlie propose à la playlist Rock d'Alice
+(2, 1, 'All Blues', 'Miles Davis', 'en_attente');          -- Alice propose à la playlist Jazz de Bob
 
 -- ============================================================
 -- FIN DU JEU DE DONNÉES
