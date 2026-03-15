@@ -50,10 +50,12 @@ CREATE TABLE contenu_playlist (
     playlist_id INT NOT NULL,
     morceau_id INT NOT NULL,
     position INT NOT NULL,
+    proposeur_id INT NULL,
     date_ajout TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (playlist_id, morceau_id),
     CONSTRAINT fk_contenu_playlist FOREIGN KEY (playlist_id) REFERENCES playlist(id) ON DELETE CASCADE,
-    CONSTRAINT fk_contenu_morceau FOREIGN KEY (morceau_id) REFERENCES morceau(id) ON DELETE CASCADE
+    CONSTRAINT fk_contenu_morceau FOREIGN KEY (morceau_id) REFERENCES morceau(id) ON DELETE CASCADE,
+    CONSTRAINT fk_contenu_proposeur FOREIGN KEY (proposeur_id) REFERENCES utilisateur(id) ON DELETE SET NULL
 ) ENGINE=InnoDB;
 
 -- Table PARTICIPATION
